@@ -13,6 +13,7 @@
       --text-muted: #7d8590;
       --c1: #3fb950;
       --c2: #58a6ff;
+      --c3: #f0b429;
     }
     html, body { height:100%; overflow:hidden; }
     body {
@@ -45,6 +46,8 @@
     #btn-1.on .tab-num { background:rgba(63,185,80,0.2); color:var(--c1); }
     #btn-2.on { color:var(--c2); border-bottom-color:var(--c2); background:rgba(88,166,255,0.07); }
     #btn-2.on .tab-num { background:rgba(88,166,255,0.2); color:var(--c2); }
+    #btn-3.on { color:var(--c3); border-bottom-color:var(--c3); background:rgba(240,180,41,0.07); }
+    #btn-3.on .tab-num { background:rgba(240,180,41,0.2); color:var(--c3); }
     .tab-spacer { flex:1; }
     #clock { display:flex; align-items:center; font-size:12px; color:var(--text-muted); font-variant-numeric:tabular-nums; padding-right:4px; }
     .tab-panel { display:none; flex:1; min-height:0; }
@@ -70,39 +73,52 @@
 </div>
 
 <div class="tab-bar">
-  <button class="tab-btn on" id="btn-1" onclick="show(1)"><span class="tab-num">01</span> KR</button>
-  <button class="tab-btn" id="btn-2" onclick="show(2)"><span class="tab-num">02</span> US</button>
+  <button class="tab-btn on" id="btn-1" onclick="show(1)"><span class="tab-num">01</span> KOSPI</button>
+  <button class="tab-btn" id="btn-2" onclick="show(2)"><span class="tab-num">02</span> KOSDAQ</button>
+  <button class="tab-btn" id="btn-3" onclick="show(3)"><span class="tab-num">03</span> S&amp;P 500</button>
   <div class="tab-spacer"></div>
   <div id="clock"></div>
 </div>
 
-<!-- KR 탭: KOSPI200 + KOSDAQ150 좌우 -->
+<!-- 탭 1: KOSPI -->
 <div class="tab-panel on" id="panel-1">
   <div class="heatmap-area">
     <div class="heatmap-panel">
-      <div class="panel-title">KOSPI 200</div>
-      <div class="heatmap-inner"><iframe src="kospi.html" scrolling="no"></iframe></div>
-    </div>
-    <div class="heatmap-panel">
-      <div class="panel-title">KOSDAQ 150</div>
-      <div class="heatmap-inner"><iframe src="kosdaq.html" scrolling="no"></iframe></div>
+      <div class="panel-title">KOSPI</div>
+      <div class="heatmap-inner">
+        <iframe src="https://markets.hankyung.com/marketmap/kospi" scrolling="no"></iframe>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- US 탭: S&P500 -->
+<!-- 탭 2: KOSDAQ -->
 <div class="tab-panel" id="panel-2">
   <div class="heatmap-area">
     <div class="heatmap-panel">
+      <div class="panel-title">KOSDAQ</div>
+      <div class="heatmap-inner">
+        <iframe src="https://markets.hankyung.com/marketmap/kosdaq" scrolling="no"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 탭 3: S&P500 -->
+<div class="tab-panel" id="panel-3">
+  <div class="heatmap-area">
+    <div class="heatmap-panel">
       <div class="panel-title">S&amp;P 500</div>
-      <div class="heatmap-inner"><iframe src="spx500.html" scrolling="no"></iframe></div>
+      <div class="heatmap-inner">
+        <iframe src="spx500.html" scrolling="no"></iframe>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
   function show(n) {
-    [1,2].forEach(i => {
+    [1,2,3].forEach(i => {
       document.getElementById('panel-'+i).classList.toggle('on', i===n);
       document.getElementById('btn-'+i).classList.toggle('on', i===n);
     });
