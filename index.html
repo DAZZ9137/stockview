@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DAZZ 시세판</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg: #0d1117;
+      --bg-card: #161b22;
+      --border: #30363d;
+      --text-muted: #7d8590;
+      --c1: #3fb950;
+      --c2: #58a6ff;
+      --c3: #f0b429;
+    }
+    html, body { height:100%; overflow:hidden; }
+    body {
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 티커 */
+    .ticker-wrap {
+      flex-shrink: 0;
+      background: #000;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* 탭 바 */
+    .tab-bar {
+      flex-shrink: 0;
+      display: flex;
+      align-items: stretch;
+      background: var(--bg-card);
+      border-bottom: 2px solid var(--border);
+      height: 46px;
+      padding: 0 8px;
+      gap: 2px;
+    }
+    .tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 18px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s, border-color 0.15s;
+      border-radius: 4px 4px 0 0;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { background: rgba(255,255,255,0.04); color:#e6edf3; }
+    .tab-num {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text-muted);
+      transition: background 0.15s, color 0.15s;
+    }
+    #btn-1.on { color:var(--c1); border-bottom-color:var(--c1); background:rgba(63,185,80,0.07); }
+    #btn-1.on .tab-num { background:rgba(63,185,80,0.2); color:var(--c1); }
+    #btn-2.on { color:var(--c2); border-bottom-color:var(--c2); background:rgba(88,166,255,0.07); }
+    #btn-2.on .tab-num { background:rgba(88,166,255,0.2); color:var(--c2); }
+    #btn-3.on { color:var(--c3); border-bottom-color:var(--c3); background:rgba(240,180,41,0.07); }
+    #btn-3.on .tab-num { background:rgba(240,180,41,0.2); color:var(--c3); }
+
+    .tab-spacer { flex:1; }
+    #clock {
+      display:flex; align-items:center;
+      font-size:12px; color:var(--text-muted);
+      font-variant-numeric:tabular-nums;
+      padding-right:4px;
+    }
+
+    /* 탭 패널 */
+    .tab-panel { display:none; flex:1; min-height:0; }
+    .tab-panel.on { display:flex; }
+
+    /* 히트맵 영역 — 탭별 분할 */
+    .heatmap-area { flex:1; display:flex; min-height:0; }
+
+    .heatmap-panel {
+      flex:1; min-width:0;
+      display:flex; flex-direction:column;
+      border-right:1px solid var(--border);
+    }
+    .heatmap-panel:last-child { border-right:none; }
+
+    .panel-title {
+      flex-shrink:0;
+      padding:5px 14px;
+      font-size:10px; font-weight:700;
+      letter-spacing:1.4px; text-transform:uppercase;
+      color:var(--text-muted);
+      border-bottom:1px solid var(--border);
+      background:var(--bg-card);
+    }
+
+    .heatmap-inner { flex:1; min-height:0; position:relative; }
+    .heatmap-inner iframe {
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      border:none; display:block;
+    }
+
+    @media (max-width:640px) {
+      .heatmap-area { flex-direction:column; }
+      .heatmap-panel { flex:none; height:50%; border-right:none; border-bottom:1px solid var(--border); }
+      .heatmap-panel:last-child { border-bottom:none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 티커 테이프 -->
+<div class="ticker-wrap">
+  <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
+  <tv-ticker-tape
+    color-theme="dark"
+    symbols="FX_IDC:USDKRW,TVC:DXY,TVC:GOLD,TVC:SILVER,BLACKBULL:WTI,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,THINKMARKETS:NAS100">
+  </tv-ticker-tape>
+</div>
+
+<!-- 탭 바 -->
+<div class="tab-bar">
+  <button class="tab-btn on" id="btn-1" onclick="show(1)">
+    <span class="tab-num">01</span> KOSPI
+  </button>
+  <button class="tab-btn" id="btn-2" onclick="show(2)">
+    <span class="tab-num">02</span> KOSDAQ
+  </button>
+  <button class="tab-btn" id="btn-3" onclick="show(3)">
+    <span class="tab-num">03</span> S&amp;P 500
+  </button>
+  <div class="tab-spacer"></div>
+  <div id="clock"></div>
+</div>
+
+<!-- 탭 1: KOSPI + KOSDAQ 나란히 (파일 분리 iframe) -->
+<div class="tab-panel on" id="panel-1">
+  <div class="heatmap-area">
+    <div class="heatmap-panel">
+      <div class="panel-title">KOSPI 200</div>
+      <div class="heatmap-inner">
+        <iframe src="kospi.html" scrolling="no"></iframe>
+      </div>
+    </div>
+    <div class="heatmap-panel">
+      <div class="panel-title">KOSDAQ 150</div>
+      <div class="heatmap-inner">
+        <iframe src="kosdaq.html" scrolling="no"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 탭 2: S&P500 단독 (파일 분리 iframe) -->
+<div class="tab-panel" id="panel-2">
+  <div class="heatmap-area">
+    <div class="heatmap-panel">
+      <div class="panel-title">S&amp;P 500</div>
+      <div class="heatmap-inner">
+        <iframe src="spx500.html" scrolling="no"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* 탭 구조 변경: 01=KR(코스피+코스닥 나란히), 02=US(S&P500), 03 제거 */
+  function show(n) {
+    [1,2].forEach(i => {
+      document.getElementById('panel-' + i).classList.toggle('on', i === n);
+      document.getElementById('btn-'   + i).classList.toggle('on', i === n);
+    });
+    setHeight();
+  }
+
+  /* 시계 */
+  function tick() {
+    const opts = { timeZone:'Asia/Seoul', hour12:false,
+      year:'numeric', month:'2-digit', day:'2-digit',
+      hour:'2-digit', minute:'2-digit', second:'2-digit' };
+    document.getElementById('clock').textContent =
+      new Date().toLocaleString('ko-KR', opts) + ' KST';
+  }
+  tick(); setInterval(tick, 1000);
+
+  /* 높이 */
+  function setHeight() {
+    const used = document.querySelector('.ticker-wrap').offsetHeight
+               + document.querySelector('.tab-bar').offsetHeight;
+    const h = Math.max(window.innerHeight - used, 300) + 'px';
+    document.querySelectorAll('.tab-panel').forEach(el => el.style.height = h);
+    document.querySelectorAll('.heatmap-area').forEach(el => el.style.height = h);
+  }
+  setHeight();
+  window.addEventListener('resize', setHeight);
+</script>
+
+</body>
+</html>
