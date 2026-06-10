@@ -22,7 +22,11 @@
       display: flex;
       flex-direction: column;
     }
+
+    /* 티커 */
     .ticker-wrap { flex-shrink:0; background:#000; border-bottom:1px solid var(--border); }
+
+    /* 탭 바 */
     .tab-bar {
       flex-shrink:0; display:flex; align-items:stretch;
       background:var(--bg-card); border-bottom:2px solid var(--border);
@@ -49,63 +53,98 @@
     #btn-3.on { color:var(--c3); border-bottom-color:var(--c3); background:rgba(240,180,41,0.07); }
     #btn-3.on .tab-num { background:rgba(240,180,41,0.2); color:var(--c3); }
     .tab-spacer { flex:1; }
-    #clock { display:flex; align-items:center; font-size:12px; color:var(--text-muted); font-variant-numeric:tabular-nums; padding-right:4px; }
+    #clock {
+      display:flex; align-items:center;
+      font-size:12px; color:var(--text-muted);
+      font-variant-numeric:tabular-nums; padding-right:4px;
+    }
+
+    /* 탭 패널 */
     .tab-panel { display:none; flex:1; min-height:0; }
     .tab-panel.on { display:flex; }
-    .heatmap-area { flex:1; display:flex; min-height:0; }
-    .heatmap-panel { flex:1; min-width:0; display:flex; flex-direction:column; border-right:1px solid var(--border); }
+
+    /* 히트맵 영역 */
+    .heatmap-area { flex:1; display:flex; min-height:0; width:100%; }
+    .heatmap-panel {
+      flex:1; min-width:0;
+      display:flex; flex-direction:column;
+      border-right:1px solid var(--border);
+    }
     .heatmap-panel:last-child { border-right:none; }
-    .panel-title { flex-shrink:0; padding:5px 14px; font-size:10px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); background:var(--bg-card); }
+    .panel-title {
+      flex-shrink:0; padding:5px 14px;
+      font-size:10px; font-weight:700;
+      letter-spacing:1.4px; text-transform:uppercase;
+      color:var(--text-muted); border-bottom:1px solid var(--border);
+      background:var(--bg-card);
+    }
     .heatmap-inner { flex:1; min-height:0; position:relative; }
-    .heatmap-inner iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:block; }
-    @media (max-width:640px) {
-      .heatmap-area { flex-direction:column; }
-      .heatmap-panel { flex:none; height:50%; border-right:none; border-bottom:1px solid var(--border); }
-      .heatmap-panel:last-child { border-bottom:none; }
+    .heatmap-inner iframe {
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      border:none; display:block;
+    }
+
+    /* 모바일: KR 탭은 KOSPI/KOSDAQ 상하 분할, 탭 버튼 숨김 */
+    @media (max-width: 768px) {
+      /* KR 탭: 좌우 → 상하 */
+      #panel-1 .heatmap-area { flex-direction: column; }
+      #panel-1 .heatmap-panel {
+        flex: none;
+        height: 50%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      #panel-1 .heatmap-panel:last-child { border-bottom: none; }
+      /* 탭 버튼 텍스트 축소 */
+      .tab-btn { padding: 0 12px; font-size: 12px; }
     }
   </style>
 </head>
 <body>
 
+<!-- 티커 테이프 -->
 <div class="ticker-wrap">
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
-  <tv-ticker-tape color-theme="dark" symbols="FX_IDC:USDKRW,TVC:DXY,TVC:GOLD,TVC:SILVER,BLACKBULL:WTI,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,THINKMARKETS:NAS100"></tv-ticker-tape>
+  <tv-ticker-tape color-theme="dark"
+    symbols="FX_IDC:USDKRW,TVC:DXY,TVC:GOLD,TVC:SILVER,BLACKBULL:WTI,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,THINKMARKETS:NAS100">
+  </tv-ticker-tape>
 </div>
 
+<!-- 탭 바 -->
 <div class="tab-bar">
-  <button class="tab-btn on" id="btn-1" onclick="show(1)"><span class="tab-num">01</span> KOSPI</button>
-  <button class="tab-btn" id="btn-2" onclick="show(2)"><span class="tab-num">02</span> KOSDAQ</button>
-  <button class="tab-btn" id="btn-3" onclick="show(3)"><span class="tab-num">03</span> S&amp;P 500</button>
+  <button class="tab-btn on" id="btn-1" onclick="show(1)">
+    <span class="tab-num">01</span> KR
+  </button>
+  <button class="tab-btn" id="btn-2" onclick="show(2)">
+    <span class="tab-num">02</span> US
+  </button>
   <div class="tab-spacer"></div>
   <div id="clock"></div>
 </div>
 
-<!-- 탭 1: KOSPI -->
+<!-- 탭 1: KR — PC는 KOSPI+KOSDAQ 좌우, 모바일은 상하 -->
 <div class="tab-panel on" id="panel-1">
   <div class="heatmap-area">
     <div class="heatmap-panel">
       <div class="panel-title">KOSPI</div>
       <div class="heatmap-inner">
-        <iframe src="https://markets.hankyung.com/marketmap/kospi" scrolling="no"></iframe>
+        <iframe src="https://prober.kr/product/heatmap/stockKor?market=KOSPI"
+          scrolling="no" allowtransparency="true"></iframe>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- 탭 2: KOSDAQ -->
-<div class="tab-panel" id="panel-2">
-  <div class="heatmap-area">
     <div class="heatmap-panel">
       <div class="panel-title">KOSDAQ</div>
       <div class="heatmap-inner">
-        <iframe src="https://markets.hankyung.com/marketmap/kosdaq" scrolling="no"></iframe>
+        <iframe src="https://prober.kr/product/heatmap/stockKor?market=KOSDAQ"
+          scrolling="no" allowtransparency="true"></iframe>
       </div>
     </div>
   </div>
 </div>
 
-<!-- 탭 3: S&P500 -->
-<div class="tab-panel" id="panel-3">
+<!-- 탭 2: US — S&P500 -->
+<div class="tab-panel" id="panel-2">
   <div class="heatmap-area">
     <div class="heatmap-panel">
       <div class="panel-title">S&amp;P 500</div>
@@ -118,19 +157,23 @@
 
 <script>
   function show(n) {
-    [1,2,3].forEach(i => {
+    [1,2].forEach(i => {
       document.getElementById('panel-'+i).classList.toggle('on', i===n);
       document.getElementById('btn-'+i).classList.toggle('on', i===n);
     });
     setHeight();
   }
   function tick() {
-    const opts = {timeZone:'Asia/Seoul',hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'};
-    document.getElementById('clock').textContent = new Date().toLocaleString('ko-KR',opts)+' KST';
+    const opts = {timeZone:'Asia/Seoul',hour12:false,
+      year:'numeric',month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',second:'2-digit'};
+    document.getElementById('clock').textContent =
+      new Date().toLocaleString('ko-KR',opts)+' KST';
   }
   tick(); setInterval(tick,1000);
   function setHeight() {
-    const used = document.querySelector('.ticker-wrap').offsetHeight + document.querySelector('.tab-bar').offsetHeight;
+    const used = document.querySelector('.ticker-wrap').offsetHeight
+               + document.querySelector('.tab-bar').offsetHeight;
     const h = Math.max(window.innerHeight-used,300)+'px';
     document.querySelectorAll('.tab-panel,.heatmap-area').forEach(el=>el.style.height=h);
   }
