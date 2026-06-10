@@ -22,7 +22,7 @@
       flex-direction: column;
     }
 
-    /* ① 티커 — 배경 검정 강제 */
+    /* 티커 */
     .ticker-wrap {
       flex-shrink: 0;
       background: #000;
@@ -32,73 +32,108 @@
 
     /* 탭 바 */
     .tab-bar {
-      flex-shrink:0; display:flex; align-items:stretch;
-      background:var(--bg-card); border-bottom:2px solid var(--border);
-      height:46px; padding:0 8px; gap:2px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: stretch;
+      background: var(--bg-card);
+      border-bottom: 2px solid var(--border);
+      height: 46px;
+      padding: 0 8px;
+      gap: 2px;
     }
     .tab-btn {
-      display:flex; align-items:center; gap:7px; padding:0 18px;
-      font-size:13px; font-weight:700; color:var(--text-muted);
-      background:none; border:none; border-bottom:3px solid transparent;
-      margin-bottom:-2px; cursor:pointer;
-      transition:color 0.15s, background 0.15s, border-color 0.15s;
-      border-radius:4px 4px 0 0; white-space:nowrap;
+      display: flex; align-items: center; gap: 6px;
+      padding: 0 16px;
+      font-size: 13px; font-weight: 700; color: var(--text-muted);
+      background: none; border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px; cursor: pointer;
+      transition: color 0.15s, background 0.15s, border-color 0.15s;
+      border-radius: 4px 4px 0 0; white-space: nowrap;
     }
-    .tab-btn:hover { background:rgba(255,255,255,0.04); color:#e6edf3; }
+    .tab-btn:hover { background: rgba(255,255,255,0.04); color: #e6edf3; }
     .tab-num {
-      font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;
-      background:rgba(255,255,255,0.08); color:var(--text-muted);
-      transition:background 0.15s, color 0.15s;
+      font-size: 10px; font-weight: 700;
+      padding: 2px 5px; border-radius: 4px;
+      background: rgba(255,255,255,0.08); color: var(--text-muted);
+      transition: background 0.15s, color 0.15s;
     }
-    #btn-1.on { color:var(--c1); border-bottom-color:var(--c1); background:rgba(63,185,80,0.07); }
-    #btn-1.on .tab-num { background:rgba(63,185,80,0.2); color:var(--c1); }
-    #btn-2.on { color:var(--c2); border-bottom-color:var(--c2); background:rgba(88,166,255,0.07); }
-    #btn-2.on .tab-num { background:rgba(88,166,255,0.2); color:var(--c2); }
-    .tab-spacer { flex:1; }
+    /* KR 서브탭 (PC에서는 숨김) */
+    .sub-tab-bar {
+      display: none;
+      flex-shrink: 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      height: 38px;
+      padding: 0 8px;
+      gap: 2px;
+    }
+    .sub-tab-btn {
+      display: flex; align-items: center;
+      padding: 0 16px;
+      font-size: 12px; font-weight: 600; color: var(--text-muted);
+      background: none; border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px; cursor: pointer;
+    }
+    .sub-tab-btn.on { color: var(--c1); border-bottom-color: var(--c1); }
+
+    /* 탭 활성 색상 */
+    #btn-kr.on { color: var(--c1); border-bottom-color: var(--c1); background: rgba(63,185,80,0.07); }
+    #btn-kr.on .tab-num { background: rgba(63,185,80,0.2); color: var(--c1); }
+    #btn-us.on { color: var(--c2); border-bottom-color: var(--c2); background: rgba(88,166,255,0.07); }
+    #btn-us.on .tab-num { background: rgba(88,166,255,0.2); color: var(--c2); }
+
+    .tab-spacer { flex: 1; }
     #clock {
-      display:flex; align-items:center;
-      font-size:12px; color:var(--text-muted);
-      font-variant-numeric:tabular-nums; padding-right:4px;
+      display: flex; align-items: center;
+      font-size: 12px; color: var(--text-muted);
+      font-variant-numeric: tabular-nums; padding-right: 4px;
     }
 
     /* 탭 패널 */
-    .tab-panel { display:none; flex:1; min-height:0; }
-    .tab-panel.on { display:flex; }
+    .tab-panel { display: none; flex: 1; min-height: 0; }
+    .tab-panel.on { display: flex; }
 
     /* 히트맵 영역 */
-    .heatmap-area { flex:1; display:flex; min-height:0; width:100%; }
+    .heatmap-area { flex: 1; display: flex; min-height: 0; width: 100%; }
     .heatmap-panel {
-      flex:1; min-width:0;
-      display:flex; flex-direction:column;
-      border-right:1px solid var(--border);
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column;
+      border-right: 1px solid var(--border);
     }
-    .heatmap-panel:last-child { border-right:none; }
+    .heatmap-panel:last-child { border-right: none; }
     .panel-title {
-      flex-shrink:0; padding:5px 14px;
-      font-size:10px; font-weight:700;
-      letter-spacing:1.4px; text-transform:uppercase;
-      color:var(--text-muted); border-bottom:1px solid var(--border);
-      background:var(--bg-card);
+      flex-shrink: 0; padding: 5px 14px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 1.4px; text-transform: uppercase;
+      color: var(--text-muted); border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
     }
-    .heatmap-inner { flex:1; min-height:0; position:relative; }
-
-    /* ② iframe 스크롤 허용 */
+    .heatmap-inner { flex: 1; min-height: 0; position: relative; }
     .heatmap-inner iframe {
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      border:none; display:block;
-      overflow:auto;
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: none; display: block;
     }
 
-    /* 모바일: 상하 분할 */
+    /* ── 모바일 (768px 이하) ── */
     @media (max-width: 768px) {
-      #panel-1 .heatmap-area { flex-direction: column; }
-      #panel-1 .heatmap-panel {
-        flex: none; height: 50%;
-        border-right: none; border-bottom: 1px solid var(--border);
+      /* 서브탭 바 표시 */
+      .sub-tab-bar { display: flex; }
+
+      /* KR 탭: 좌우 → 단일 패널 (서브탭으로 전환) */
+      #panel-kr .heatmap-area { flex-direction: column; }
+      #panel-kr .heatmap-panel {
+        position: absolute; inset: 0;
+        flex: 1; border: none;
+        display: none;
       }
-      #panel-1 .heatmap-panel:last-child { border-bottom: none; }
-      .tab-btn { padding: 0 12px; font-size: 12px; }
+      #panel-kr .heatmap-panel.active { display: flex; }
+      #panel-kr .heatmap-area { position: relative; }
+
+      .tab-btn { padding: 0 10px; font-size: 12px; }
+      #clock { font-size: 11px; }
     }
   </style>
 </head>
@@ -112,49 +147,44 @@
   </tv-ticker-tape>
 </div>
 
-<!-- 탭 바 -->
+<!-- 메인 탭 바 -->
 <div class="tab-bar">
-  <button class="tab-btn on" id="btn-1" onclick="show(1)">
+  <button class="tab-btn on" id="btn-kr" onclick="showMain('kr')">
     <span class="tab-num">01</span> KR
   </button>
-  <button class="tab-btn" id="btn-2" onclick="show(2)">
+  <button class="tab-btn" id="btn-us" onclick="showMain('us')">
     <span class="tab-num">02</span> US
   </button>
   <div class="tab-spacer"></div>
   <div id="clock"></div>
 </div>
 
+<!-- 서브탭 바 (모바일 전용: KR탭 내 KOSPI/KOSDAQ 전환) -->
+<div class="sub-tab-bar" id="sub-tab-bar">
+  <button class="sub-tab-btn on" id="sub-kospi" onclick="showSub('kospi')">KOSPI</button>
+  <button class="sub-tab-btn" id="sub-kosdaq" onclick="showSub('kosdaq')">KOSDAQ</button>
+</div>
+
 <!-- KR 탭 -->
-<div class="tab-panel on" id="panel-1">
+<div class="tab-panel on" id="panel-kr">
   <div class="heatmap-area">
-    <div class="heatmap-panel">
+    <div class="heatmap-panel active" id="panel-kospi">
       <div class="panel-title">KOSPI</div>
       <div class="heatmap-inner">
-        <!-- ③ KOSPI 탭 자동 선택: hash로 시도 -->
-        <iframe
-          id="iframe-kospi"
-          src="https://prober.kr/product/heatmap/stockKor"
-          scrolling="yes"
-          allowtransparency="true">
-        </iframe>
+        <iframe src="https://prober.kr/product/heatmap/stockKor" scrolling="yes"></iframe>
       </div>
     </div>
-    <div class="heatmap-panel">
+    <div class="heatmap-panel" id="panel-kosdaq">
       <div class="panel-title">KOSDAQ</div>
       <div class="heatmap-inner">
-        <iframe
-          id="iframe-kosdaq"
-          src="https://prober.kr/product/heatmap/stockKor"
-          scrolling="yes"
-          allowtransparency="true">
-        </iframe>
+        <iframe src="https://prober.kr/product/heatmap/stockKor" scrolling="yes"></iframe>
       </div>
     </div>
   </div>
 </div>
 
 <!-- US 탭 -->
-<div class="tab-panel" id="panel-2">
+<div class="tab-panel" id="panel-us">
   <div class="heatmap-area">
     <div class="heatmap-panel">
       <div class="panel-title">S&amp;P 500</div>
@@ -166,34 +196,25 @@
 </div>
 
 <script>
-  function show(n) {
-    [1,2].forEach(i => {
-      document.getElementById('panel-'+i).classList.toggle('on', i===n);
-      document.getElementById('btn-'+i).classList.toggle('on', i===n);
+  const isMobile = () => window.innerWidth <= 768;
+
+  function showMain(id) {
+    ['kr','us'].forEach(i => {
+      document.getElementById('panel-'+i).classList.toggle('on', i===id);
+      document.getElementById('btn-'+i).classList.toggle('on', i===id);
     });
+    // 서브탭은 KR 탭일 때만 표시
+    document.getElementById('sub-tab-bar').style.display =
+      (id === 'kr' && isMobile()) ? 'flex' : 'none';
     setHeight();
   }
 
-  /* ③ KOSPI/KOSDAQ 탭 자동 클릭 — iframe 로드 후 버튼 클릭 */
-  function autoClickMarket(iframeId, market) {
-    const iframe = document.getElementById(iframeId);
-    iframe.addEventListener('load', function() {
-      try {
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-        // KOSPI 또는 KOSDAQ 버튼 찾아서 클릭
-        const btns = doc.querySelectorAll('button, [role="tab"], .tab-btn, a');
-        btns.forEach(btn => {
-          if (btn.textContent.trim() === market) {
-            btn.click();
-          }
-        });
-      } catch(e) {
-        // cross-origin 제한 시 무시
-      }
+  function showSub(market) {
+    ['kospi','kosdaq'].forEach(m => {
+      document.getElementById('panel-'+m).classList.toggle('active', m===market);
+      document.getElementById('sub-'+m).classList.toggle('on', m===market);
     });
   }
-  autoClickMarket('iframe-kospi', 'KOSPI');
-  autoClickMarket('iframe-kosdaq', 'KOSDAQ');
 
   /* 시계 */
   function tick() {
@@ -207,13 +228,22 @@
 
   /* 높이 */
   function setHeight() {
-    const used = document.querySelector('.ticker-wrap').offsetHeight
-               + document.querySelector('.tab-bar').offsetHeight;
-    const h = Math.max(window.innerHeight-used,300)+'px';
-    document.querySelectorAll('.tab-panel,.heatmap-area').forEach(el=>el.style.height=h);
+    const ticker = document.querySelector('.ticker-wrap').offsetHeight;
+    const tabBar = document.querySelector('.tab-bar').offsetHeight;
+    const subBar = document.getElementById('sub-tab-bar');
+    const subH = (subBar.style.display !== 'none') ? subBar.offsetHeight : 0;
+    const h = Math.max(window.innerHeight - ticker - tabBar - subH, 300) + 'px';
+    document.querySelectorAll('.tab-panel,.heatmap-area').forEach(el => el.style.height = h);
   }
   setHeight();
-  window.addEventListener('resize',setHeight);
+
+  window.addEventListener('resize', () => {
+    // 화면 크기 변경 시 서브탭 표시 여부 재계산
+    const krActive = document.getElementById('panel-kr').classList.contains('on');
+    document.getElementById('sub-tab-bar').style.display =
+      (krActive && isMobile()) ? 'flex' : 'none';
+    setHeight();
+  });
 </script>
 </body>
 </html>
