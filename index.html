@@ -22,7 +22,7 @@
       flex-direction: column;
     }
 
-    /* 티커 */
+    /* 티커 — PC는 고정, 모바일은 숨김 */
     .ticker-wrap {
       flex-shrink: 0;
       background: #000;
@@ -37,13 +37,13 @@
       align-items: stretch;
       background: var(--bg-card);
       border-bottom: 2px solid var(--border);
-      height: 46px;
+      height: 42px;
       padding: 0 8px;
       gap: 2px;
     }
     .tab-btn {
       display: flex; align-items: center; gap: 6px;
-      padding: 0 16px;
+      padding: 0 14px;
       font-size: 13px; font-weight: 700; color: var(--text-muted);
       background: none; border: none;
       border-bottom: 3px solid transparent;
@@ -56,21 +56,24 @@
       font-size: 10px; font-weight: 700;
       padding: 2px 5px; border-radius: 4px;
       background: rgba(255,255,255,0.08); color: var(--text-muted);
-      transition: background 0.15s, color 0.15s;
     }
-    /* KR 서브탭 (PC에서는 숨김) */
+    #btn-kr.on { color:var(--c1); border-bottom-color:var(--c1); background:rgba(63,185,80,0.07); }
+    #btn-kr.on .tab-num { background:rgba(63,185,80,0.2); color:var(--c1); }
+    #btn-us.on { color:var(--c2); border-bottom-color:var(--c2); background:rgba(88,166,255,0.07); }
+    #btn-us.on .tab-num { background:rgba(88,166,255,0.2); color:var(--c2); }
+
+    /* 서브탭 (모바일 전용) */
     .sub-tab-bar {
       display: none;
       flex-shrink: 0;
       background: var(--bg);
       border-bottom: 1px solid var(--border);
-      height: 38px;
+      height: 34px;
       padding: 0 8px;
-      gap: 2px;
     }
     .sub-tab-btn {
-      display: flex; align-items: center;
-      padding: 0 16px;
+      display: inline-flex; align-items: center;
+      padding: 0 16px; height: 100%;
       font-size: 12px; font-weight: 600; color: var(--text-muted);
       background: none; border: none;
       border-bottom: 2px solid transparent;
@@ -78,16 +81,10 @@
     }
     .sub-tab-btn.on { color: var(--c1); border-bottom-color: var(--c1); }
 
-    /* 탭 활성 색상 */
-    #btn-kr.on { color: var(--c1); border-bottom-color: var(--c1); background: rgba(63,185,80,0.07); }
-    #btn-kr.on .tab-num { background: rgba(63,185,80,0.2); color: var(--c1); }
-    #btn-us.on { color: var(--c2); border-bottom-color: var(--c2); background: rgba(88,166,255,0.07); }
-    #btn-us.on .tab-num { background: rgba(88,166,255,0.2); color: var(--c2); }
-
-    .tab-spacer { flex: 1; }
+    .tab-spacer { flex:1; }
     #clock {
       display: flex; align-items: center;
-      font-size: 12px; color: var(--text-muted);
+      font-size: 11px; color: var(--text-muted);
       font-variant-numeric: tabular-nums; padding-right: 4px;
     }
 
@@ -95,8 +92,8 @@
     .tab-panel { display: none; flex: 1; min-height: 0; }
     .tab-panel.on { display: flex; }
 
-    /* 히트맵 영역 */
-    .heatmap-area { flex: 1; display: flex; min-height: 0; width: 100%; }
+    /* 히트맵 */
+    .heatmap-area { flex: 1; display: flex; min-height: 0; }
     .heatmap-panel {
       flex: 1; min-width: 0;
       display: flex; flex-direction: column;
@@ -104,9 +101,9 @@
     }
     .heatmap-panel:last-child { border-right: none; }
     .panel-title {
-      flex-shrink: 0; padding: 5px 14px;
+      flex-shrink: 0; padding: 4px 12px;
       font-size: 10px; font-weight: 700;
-      letter-spacing: 1.4px; text-transform: uppercase;
+      letter-spacing: 1.2px; text-transform: uppercase;
       color: var(--text-muted); border-bottom: 1px solid var(--border);
       background: var(--bg-card);
     }
@@ -117,29 +114,29 @@
       border: none; display: block;
     }
 
-    /* ── 모바일 (768px 이하) ── */
+    /* ── 모바일 ── */
     @media (max-width: 768px) {
-      /* 서브탭 바 표시 */
+      /* 티커 숨김 */
+      .ticker-wrap { display: none; }
+      /* 서브탭 표시 */
       .sub-tab-bar { display: flex; }
-
-      /* KR 탭: 좌우 → 단일 패널 (서브탭으로 전환) */
-      #panel-kr .heatmap-area { flex-direction: column; }
+      /* 탭바 높이 줄이기 */
+      .tab-bar { height: 38px; }
+      /* KR 패널: 서브탭으로 전환 */
+      #panel-kr .heatmap-area { position: relative; }
       #panel-kr .heatmap-panel {
         position: absolute; inset: 0;
-        flex: 1; border: none;
-        display: none;
+        display: none; border: none;
       }
       #panel-kr .heatmap-panel.active { display: flex; }
-      #panel-kr .heatmap-area { position: relative; }
-
-      .tab-btn { padding: 0 10px; font-size: 12px; }
-      #clock { font-size: 11px; }
+      /* panel-title 모바일에서 숨김 (서브탭이 역할 대체) */
+      #panel-kr .panel-title { display: none; }
     }
   </style>
 </head>
 <body>
 
-<!-- 티커 테이프 -->
+<!-- 티커 (PC만) -->
 <div class="ticker-wrap">
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
   <tv-ticker-tape color-theme="dark"
@@ -159,7 +156,7 @@
   <div id="clock"></div>
 </div>
 
-<!-- 서브탭 바 (모바일 전용: KR탭 내 KOSPI/KOSDAQ 전환) -->
+<!-- 서브탭 (모바일 전용) -->
 <div class="sub-tab-bar" id="sub-tab-bar">
   <button class="sub-tab-btn on" id="sub-kospi" onclick="showSub('kospi')">KOSPI</button>
   <button class="sub-tab-btn" id="sub-kosdaq" onclick="showSub('kosdaq')">KOSDAQ</button>
@@ -203,9 +200,8 @@
       document.getElementById('panel-'+i).classList.toggle('on', i===id);
       document.getElementById('btn-'+i).classList.toggle('on', i===id);
     });
-    // 서브탭은 KR 탭일 때만 표시
     document.getElementById('sub-tab-bar').style.display =
-      (id === 'kr' && isMobile()) ? 'flex' : 'none';
+      (id==='kr' && isMobile()) ? 'flex' : (isMobile() ? 'none' : 'none');
     setHeight();
   }
 
@@ -216,7 +212,6 @@
     });
   }
 
-  /* 시계 */
   function tick() {
     const opts = {timeZone:'Asia/Seoul',hour12:false,
       year:'numeric',month:'2-digit',day:'2-digit',
@@ -224,24 +219,26 @@
     document.getElementById('clock').textContent =
       new Date().toLocaleString('ko-KR',opts)+' KST';
   }
-  tick(); setInterval(tick,1000);
+  tick(); setInterval(tick, 1000);
 
-  /* 높이 */
   function setHeight() {
-    const ticker = document.querySelector('.ticker-wrap').offsetHeight;
-    const tabBar = document.querySelector('.tab-bar').offsetHeight;
+    const ticker = document.querySelector('.ticker-wrap');
+    const tabBar = document.querySelector('.tab-bar');
     const subBar = document.getElementById('sub-tab-bar');
+    const tickerH = (ticker && ticker.offsetHeight) || 0;
+    const tabH = tabBar.offsetHeight;
     const subH = (subBar.style.display !== 'none') ? subBar.offsetHeight : 0;
-    const h = Math.max(window.innerHeight - ticker - tabBar - subH, 300) + 'px';
-    document.querySelectorAll('.tab-panel,.heatmap-area').forEach(el => el.style.height = h);
+    const h = Math.max(window.innerHeight - tickerH - tabH - subH, 200) + 'px';
+    document.querySelectorAll('.tab-panel, .heatmap-area').forEach(el => el.style.height = h);
   }
   setHeight();
-
   window.addEventListener('resize', () => {
-    // 화면 크기 변경 시 서브탭 표시 여부 재계산
-    const krActive = document.getElementById('panel-kr').classList.contains('on');
-    document.getElementById('sub-tab-bar').style.display =
-      (krActive && isMobile()) ? 'flex' : 'none';
+    const krOn = document.getElementById('panel-kr').classList.contains('on');
+    if (isMobile()) {
+      document.getElementById('sub-tab-bar').style.display = krOn ? 'flex' : 'none';
+    } else {
+      document.getElementById('sub-tab-bar').style.display = 'none';
+    }
     setHeight();
   });
 </script>
