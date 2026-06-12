@@ -22,7 +22,7 @@
       flex-direction: column;
     }
 
-    /* 티커 — PC는 고정, 모바일은 숨김 */
+    /* 티커 (PC만) */
     .ticker-wrap {
       flex-shrink: 0;
       background: #000;
@@ -30,7 +30,7 @@
     }
     .ticker-wrap > * { background: #000 !important; }
 
-    /* 탭 바 */
+    /* 메인 탭 바 */
     .tab-bar {
       flex-shrink: 0;
       display: flex;
@@ -81,7 +81,7 @@
     }
     .sub-tab-btn.on { color: var(--c1); border-bottom-color: var(--c1); }
 
-    .tab-spacer { flex:1; }
+    .tab-spacer { flex: 1; }
     #clock {
       display: flex; align-items: center;
       font-size: 11px; color: var(--text-muted);
@@ -116,20 +116,15 @@
 
     /* ── 모바일 ── */
     @media (max-width: 768px) {
-      /* 티커 숨김 */
       .ticker-wrap { display: none; }
-      /* 서브탭 표시 */
       .sub-tab-bar { display: flex; }
-      /* 탭바 높이 줄이기 */
       .tab-bar { height: 38px; }
-      /* KR 패널: 서브탭으로 전환 */
       #panel-kr .heatmap-area { position: relative; }
       #panel-kr .heatmap-panel {
         position: absolute; inset: 0;
         display: none; border: none;
       }
       #panel-kr .heatmap-panel.active { display: flex; }
-      /* panel-title 모바일에서 숨김 (서브탭이 역할 대체) */
       #panel-kr .panel-title { display: none; }
     }
   </style>
@@ -156,13 +151,13 @@
   <div id="clock"></div>
 </div>
 
-<!-- 서브탭 (모바일 전용) -->
+<!-- 서브탭 (모바일 KR 전용) -->
 <div class="sub-tab-bar" id="sub-tab-bar">
   <button class="sub-tab-btn on" id="sub-kospi" onclick="showSub('kospi')">KOSPI</button>
   <button class="sub-tab-btn" id="sub-kosdaq" onclick="showSub('kosdaq')">KOSDAQ</button>
 </div>
 
-<!-- KR 탭 -->
+<!-- KR 탭: KOSPI + KOSDAQ -->
 <div class="tab-panel on" id="panel-kr">
   <div class="heatmap-area">
     <div class="heatmap-panel active" id="panel-kospi">
@@ -180,13 +175,13 @@
   </div>
 </div>
 
-<!-- US 탭 -->
+<!-- US 탭: S&P500 (prober.kr) -->
 <div class="tab-panel" id="panel-us">
   <div class="heatmap-area">
     <div class="heatmap-panel">
       <div class="panel-title">S&amp;P 500</div>
       <div class="heatmap-inner">
-        <iframe src="spx500.html" scrolling="yes"></iframe>
+        <iframe src="https://prober.kr/product/heatmap/stockUs" scrolling="yes"></iframe>
       </div>
     </div>
   </div>
@@ -201,7 +196,7 @@
       document.getElementById('btn-'+i).classList.toggle('on', i===id);
     });
     document.getElementById('sub-tab-bar').style.display =
-      (id==='kr' && isMobile()) ? 'flex' : (isMobile() ? 'none' : 'none');
+      (id==='kr' && isMobile()) ? 'flex' : 'none';
     setHeight();
   }
 
@@ -225,20 +220,18 @@
     const ticker = document.querySelector('.ticker-wrap');
     const tabBar = document.querySelector('.tab-bar');
     const subBar = document.getElementById('sub-tab-bar');
-    const tickerH = (ticker && ticker.offsetHeight) || 0;
+    const tickerH = (ticker && getComputedStyle(ticker).display !== 'none') ? ticker.offsetHeight : 0;
     const tabH = tabBar.offsetHeight;
-    const subH = (subBar.style.display !== 'none') ? subBar.offsetHeight : 0;
+    const subH = (subBar.style.display === 'flex') ? subBar.offsetHeight : 0;
     const h = Math.max(window.innerHeight - tickerH - tabH - subH, 200) + 'px';
     document.querySelectorAll('.tab-panel, .heatmap-area').forEach(el => el.style.height = h);
   }
   setHeight();
+
   window.addEventListener('resize', () => {
     const krOn = document.getElementById('panel-kr').classList.contains('on');
-    if (isMobile()) {
-      document.getElementById('sub-tab-bar').style.display = krOn ? 'flex' : 'none';
-    } else {
-      document.getElementById('sub-tab-bar').style.display = 'none';
-    }
+    document.getElementById('sub-tab-bar').style.display =
+      (isMobile() && krOn) ? 'flex' : 'none';
     setHeight();
   });
 </script>
