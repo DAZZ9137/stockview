@@ -2,7 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d1117" />
   <title>DAZZ 시세판</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -10,27 +11,33 @@
       --bg: #0d1117;
       --bg-card: #161b22;
       --border: #30363d;
+      --text: #e6edf3;
       --text-muted: #7d8590;
-      --c1: #3fb950;
-      --c2: #58a6ff;
+      --green: #3fb950;
+      --blue: #58a6ff;
+      --red: #f85149;
+      --yellow: #d29922;
     }
+
     html, body { height:100%; overflow:hidden; }
     body {
       background: var(--bg);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
       display: flex;
       flex-direction: column;
     }
 
-    /* 티커 (PC만) */
+    /* 티커: PC/태블릿 표시, 모바일 숨김 */
     .ticker-wrap {
       flex-shrink: 0;
       background: #000;
       border-bottom: 1px solid var(--border);
+      min-height: 44px;
     }
     .ticker-wrap > * { background: #000 !important; }
 
-    /* 메인 탭 바 */
+    /* 메인 탭 */
     .tab-bar {
       flex-shrink: 0;
       display: flex;
@@ -42,27 +49,72 @@
       gap: 2px;
     }
     .tab-btn {
-      display: flex; align-items: center; gap: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       padding: 0 14px;
-      font-size: 13px; font-weight: 700; color: var(--text-muted);
-      background: none; border: none;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-muted);
+      background: none;
+      border: none;
       border-bottom: 3px solid transparent;
-      margin-bottom: -2px; cursor: pointer;
+      margin-bottom: -2px;
+      cursor: pointer;
       transition: color 0.15s, background 0.15s, border-color 0.15s;
-      border-radius: 4px 4px 0 0; white-space: nowrap;
+      border-radius: 4px 4px 0 0;
+      white-space: nowrap;
     }
-    .tab-btn:hover { background: rgba(255,255,255,0.04); color: #e6edf3; }
+    .tab-btn:hover { background: rgba(255,255,255,0.04); color: var(--text); }
     .tab-num {
-      font-size: 10px; font-weight: 700;
-      padding: 2px 5px; border-radius: 4px;
-      background: rgba(255,255,255,0.08); color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text-muted);
     }
-    #btn-kr.on { color:var(--c1); border-bottom-color:var(--c1); background:rgba(63,185,80,0.07); }
-    #btn-kr.on .tab-num { background:rgba(63,185,80,0.2); color:var(--c1); }
-    #btn-us.on { color:var(--c2); border-bottom-color:var(--c2); background:rgba(88,166,255,0.07); }
-    #btn-us.on .tab-num { background:rgba(88,166,255,0.2); color:var(--c2); }
+    #btn-kr.on { color:var(--green); border-bottom-color:var(--green); background:rgba(63,185,80,0.07); }
+    #btn-kr.on .tab-num { background:rgba(63,185,80,0.2); color:var(--green); }
+    #btn-us.on { color:var(--blue); border-bottom-color:var(--blue); background:rgba(88,166,255,0.07); }
+    #btn-us.on .tab-num { background:rgba(88,166,255,0.2); color:var(--blue); }
 
-    /* 서브탭 (모바일 전용) */
+    .tab-spacer { flex: 1; }
+
+    .top-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      padding-right: 4px;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .market-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .badge {
+      padding: 3px 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-muted);
+      line-height: 1;
+    }
+    .badge.open.kr { color: var(--green); border-color: rgba(63,185,80,0.35); background: rgba(63,185,80,0.12); }
+    .badge.open.us { color: var(--blue); border-color: rgba(88,166,255,0.35); background: rgba(88,166,255,0.12); }
+    .badge.closed { color: var(--text-muted); }
+    #clock {
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    /* 서브탭 */
     .sub-tab-bar {
       display: none;
       flex-shrink: 0;
@@ -70,72 +122,97 @@
       border-bottom: 1px solid var(--border);
       height: 34px;
       padding: 0 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
+    .sub-tab-bar::-webkit-scrollbar { display:none; }
     .sub-tab-btn {
-      display: inline-flex; align-items: center;
-      padding: 0 16px; height: 100%;
-      font-size: 12px; font-weight: 600; color: var(--text-muted);
-      background: none; border: none;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 16px;
+      height: 100%;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: none;
+      border: none;
       border-bottom: 2px solid transparent;
-      margin-bottom: -1px; cursor: pointer;
+      margin-bottom: -1px;
+      cursor: pointer;
+      white-space: nowrap;
     }
-    .sub-tab-btn.on { color: var(--c1); border-bottom-color: var(--c1); }
+    .sub-tab-btn.on { color: var(--green); border-bottom-color: var(--green); }
 
-    .tab-spacer { flex: 1; }
-    #clock {
-      display: flex; align-items: center;
-      font-size: 11px; color: var(--text-muted);
-      font-variant-numeric: tabular-nums; padding-right: 4px;
-    }
-
-    /* 탭 패널 */
+    /* 패널 */
     .tab-panel { display: none; flex: 1; min-height: 0; }
     .tab-panel.on { display: flex; }
-
-    /* 히트맵 */
     .heatmap-area { flex: 1; display: flex; min-height: 0; }
     .heatmap-panel {
-      flex: 1; min-width: 0;
-      display: flex; flex-direction: column;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
       border-right: 1px solid var(--border);
+      background: var(--bg);
     }
     .heatmap-panel:last-child { border-right: none; }
     .panel-title {
-      flex-shrink: 0; padding: 4px 12px;
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 1.2px; text-transform: uppercase;
-      color: var(--text-muted); border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
       background: var(--bg-card);
     }
-    .heatmap-inner { flex: 1; min-height: 0; position: relative; }
+    .heatmap-inner { flex: 1; min-height: 0; position: relative; background: var(--bg); }
     .heatmap-inner iframe {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      border: none; display: block;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: var(--bg);
     }
 
-    /* ── 모바일 ── */
+    /* 모바일 */
     @media (max-width: 768px) {
       .ticker-wrap { display: none; }
+      .tab-bar { height: 38px; padding: 0 6px; }
+      .tab-btn { padding: 0 10px; font-size: 12px; }
+      .tab-num { font-size: 9px; padding: 2px 4px; }
+      .top-info { gap: 6px; }
+      .market-status { display:none; }
+      #clock { font-size: 10px; }
       .sub-tab-bar { display: flex; }
-      .tab-bar { height: 38px; }
       #panel-kr .heatmap-area { position: relative; }
       #panel-kr .heatmap-panel {
-        position: absolute; inset: 0;
-        display: none; border: none;
+        position: absolute;
+        inset: 0;
+        display: none;
+        border: none;
       }
       #panel-kr .heatmap-panel.active { display: flex; }
       #panel-kr .panel-title { display: none; }
+    }
+
+    @media (max-width: 420px) {
+      #clock { font-size: 9px; }
+      .tab-btn { padding: 0 8px; }
     }
   </style>
 </head>
 <body>
 
-<!-- 티커 (PC만) -->
+<!-- 티커: PC/태블릿 전용 -->
 <div class="ticker-wrap">
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
   <tv-ticker-tape color-theme="dark"
-    symbols="FX_IDC:USDKRW,TVC:DXY,TVC:GOLD,TVC:SILVER,BLACKBULL:WTI,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,THINKMARKETS:NAS100">
+    symbols="FX_IDC:USDKRW,TVC:DXY,TVC:US10Y,CBOE:VIX,NASDAQ:QQQ,NASDAQ:SOXX,TVC:GOLD,BLACKBULL:WTI,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,THINKMARKETS:NAS100">
   </tv-ticker-tape>
 </div>
 
@@ -148,40 +225,46 @@
     <span class="tab-num">02</span> US
   </button>
   <div class="tab-spacer"></div>
-  <div id="clock"></div>
+  <div class="top-info">
+    <div class="market-status" aria-label="시장 개장 상태">
+      <span id="kr-status" class="badge closed">KR</span>
+      <span id="us-status" class="badge closed">US</span>
+    </div>
+    <div id="clock"></div>
+  </div>
 </div>
 
-<!-- 서브탭 (모바일 KR 전용) -->
+<!-- 서브탭: 모바일 KR 전용 -->
 <div class="sub-tab-bar" id="sub-tab-bar">
   <button class="sub-tab-btn on" id="sub-kospi" onclick="showSub('kospi')">KOSPI</button>
   <button class="sub-tab-btn" id="sub-kosdaq" onclick="showSub('kosdaq')">KOSDAQ</button>
 </div>
 
-<!-- KR 탭: KOSPI + KOSDAQ -->
+<!-- KR 탭: PC는 KOSPI+KOSDAQ 동시 표시, 모바일은 서브탭 표시 -->
 <div class="tab-panel on" id="panel-kr">
   <div class="heatmap-area">
     <div class="heatmap-panel active" id="panel-kospi">
       <div class="panel-title">KOSPI</div>
       <div class="heatmap-inner">
-        <iframe src="https://prober.kr/product/heatmap/stockKor" scrolling="yes"></iframe>
+        <iframe src="./kospi.html" scrolling="no" title="KOSPI Heatmap"></iframe>
       </div>
     </div>
     <div class="heatmap-panel" id="panel-kosdaq">
       <div class="panel-title">KOSDAQ</div>
       <div class="heatmap-inner">
-        <iframe src="https://prober.kr/product/heatmap/stockKor" scrolling="yes"></iframe>
+        <iframe src="./kosdaq.html" scrolling="no" title="KOSDAQ Heatmap"></iframe>
       </div>
     </div>
   </div>
 </div>
 
-<!-- US 탭: S&P500 (prober.kr) -->
+<!-- US 탭: S&P500 -->
 <div class="tab-panel" id="panel-us">
   <div class="heatmap-area">
     <div class="heatmap-panel">
       <div class="panel-title">S&amp;P 500</div>
       <div class="heatmap-inner">
-        <iframe src="https://prober.kr/product/heatmap/stockUs" scrolling="yes"></iframe>
+        <iframe src="./spx500.html" scrolling="no" title="S&amp;P 500 Heatmap"></iframe>
       </div>
     </div>
   </div>
@@ -192,29 +275,87 @@
 
   function showMain(id) {
     ['kr','us'].forEach(i => {
-      document.getElementById('panel-'+i).classList.toggle('on', i===id);
-      document.getElementById('btn-'+i).classList.toggle('on', i===id);
+      document.getElementById('panel-' + i).classList.toggle('on', i === id);
+      document.getElementById('btn-' + i).classList.toggle('on', i === id);
     });
+
     document.getElementById('sub-tab-bar').style.display =
-      (id==='kr' && isMobile()) ? 'flex' : 'none';
+      (id === 'kr' && isMobile()) ? 'flex' : 'none';
+
     setHeight();
   }
 
   function showSub(market) {
     ['kospi','kosdaq'].forEach(m => {
-      document.getElementById('panel-'+m).classList.toggle('active', m===market);
-      document.getElementById('sub-'+m).classList.toggle('on', m===market);
+      document.getElementById('panel-' + m).classList.toggle('active', m === market);
+      document.getElementById('sub-' + m).classList.toggle('on', m === market);
     });
   }
 
-  function tick() {
-    const opts = {timeZone:'Asia/Seoul',hour12:false,
-      year:'numeric',month:'2-digit',day:'2-digit',
-      hour:'2-digit',minute:'2-digit',second:'2-digit'};
-    document.getElementById('clock').textContent =
-      new Date().toLocaleString('ko-KR',opts)+' KST';
+  function getTimeParts(timeZone) {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      weekday: 'short',
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit'
+    }).formatToParts(new Date());
+
+    const obj = {};
+    parts.forEach(p => { obj[p.type] = p.value; });
+    return {
+      weekday: obj.weekday,
+      hour: Number(obj.hour),
+      minute: Number(obj.minute)
+    };
   }
-  tick(); setInterval(tick, 1000);
+
+  function isWeekday(weekday) {
+    return !['Sat', 'Sun'].includes(weekday);
+  }
+
+  function isKrOpen() {
+    const t = getTimeParts('Asia/Seoul');
+    if (!isWeekday(t.weekday)) return false;
+    const mins = t.hour * 60 + t.minute;
+    return mins >= (9 * 60) && mins <= (15 * 60 + 30);
+  }
+
+  function isUsOpen() {
+    const t = getTimeParts('America/New_York');
+    if (!isWeekday(t.weekday)) return false;
+    const mins = t.hour * 60 + t.minute;
+    return mins >= (9 * 60 + 30) && mins <= (16 * 60);
+  }
+
+  function updateStatus() {
+    const kr = document.getElementById('kr-status');
+    const us = document.getElementById('us-status');
+    const krOpen = isKrOpen();
+    const usOpen = isUsOpen();
+
+    kr.textContent = krOpen ? 'KR OPEN' : 'KR CLOSED';
+    kr.className = krOpen ? 'badge open kr' : 'badge closed';
+
+    us.textContent = usOpen ? 'US OPEN' : 'US CLOSED';
+    us.className = usOpen ? 'badge open us' : 'badge closed';
+  }
+
+  function tick() {
+    const opts = {
+      timeZone: 'Asia/Seoul',
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    };
+    document.getElementById('clock').textContent =
+      new Date().toLocaleString('ko-KR', opts) + ' KST';
+    updateStatus();
+  }
 
   function setHeight() {
     const ticker = document.querySelector('.ticker-wrap');
@@ -222,10 +363,16 @@
     const subBar = document.getElementById('sub-tab-bar');
     const tickerH = (ticker && getComputedStyle(ticker).display !== 'none') ? ticker.offsetHeight : 0;
     const tabH = tabBar.offsetHeight;
-    const subH = (subBar.style.display === 'flex') ? subBar.offsetHeight : 0;
-    const h = Math.max(window.innerHeight - tickerH - tabH - subH, 200) + 'px';
-    document.querySelectorAll('.tab-panel, .heatmap-area').forEach(el => el.style.height = h);
+    const subH = (subBar && getComputedStyle(subBar).display === 'flex') ? subBar.offsetHeight : 0;
+    const h = Math.max(window.innerHeight - tickerH - tabH - subH, 220) + 'px';
+
+    document.querySelectorAll('.tab-panel, .heatmap-area').forEach(el => {
+      el.style.height = h;
+    });
   }
+
+  tick();
+  setInterval(tick, 1000);
   setHeight();
 
   window.addEventListener('resize', () => {
