@@ -84,9 +84,10 @@
 
     /* 769px 이상(태블릿+PC): Prober 자체 헤더
        (제목/검색창/로고/메뉴줄)만큼 위쪽을 잘라낸다.
-       KOSPI/KOSDAQ 버튼 줄은 남기고 그 위쪽만 자른다. */
+       KOSPI/KOSDAQ 버튼 줄은 남기고 그 위쪽만 자른다.
+       .no-crop(US 탭, TradingView 위젯)은 자체 헤더가 없어 제외 */
     @media (min-width:769px) {
-      .heatmap-inner iframe {
+      .heatmap-inner:not(.no-crop) iframe {
         width:100%;
         height: calc(100% + 100px);
         top: -100px;
@@ -103,8 +104,8 @@
         position:absolute; inset:0; display:none; border:none;
       }
       #panel-kr .heatmap-panel.active, #panel-us .heatmap-panel.active { display:flex; }
-      /* 모바일도 같은 방식으로 헤더 자르기 적용 */
-      .heatmap-inner iframe {
+      /* 모바일도 같은 방식으로 헤더 자르기 적용 (US 위젯은 제외) */
+      .heatmap-inner:not(.no-crop) iframe {
         width:100%;
         height: calc(100% + 130px);
         top: -130px;
@@ -155,13 +156,8 @@
 <div class="tab-panel" id="panel-us">
   <div class="heatmap-area">
     <div class="heatmap-panel active" id="panel-spx">
-      <div class="heatmap-inner">
-        <iframe id="iframe-spx" src="https://prober.kr/product/heatmap/stockUs" scrolling="yes"></iframe>
-      </div>
-    </div>
-    <div class="heatmap-panel" id="panel-ndx">
-      <div class="heatmap-inner">
-        <iframe id="iframe-ndx" src="https://prober.kr/product/heatmap/stockUs" scrolling="yes"></iframe>
+      <div class="heatmap-inner no-crop">
+        <iframe id="iframe-spx" src="spx500.html" scrolling="no"></iframe>
       </div>
     </div>
   </div>
@@ -174,11 +170,8 @@
     kr: [
       { id:'kospi',  label:'KOSPI'    },
       { id:'kosdaq', label:'KOSDAQ'   }
-    ],
-    us: [
-      { id:'spx', label:'S&P 500'     },
-      { id:'ndx', label:'NASDAQ100'   }
     ]
+    /* US는 prober.kr 단일 화면이라 서브탭 없음 */
   };
 
   function renderSubTabs(mainId) {
@@ -199,7 +192,7 @@
       document.getElementById('panel-'+i).classList.toggle('on', i===id);
       document.getElementById('btn-'+i).classList.toggle('on', i===id);
     });
-    if (isMobile()) {
+    if (isMobile() && id === 'kr') {
       renderSubTabs(id);
       document.getElementById('sub-tab-bar').style.display = 'flex';
     } else {
@@ -235,7 +228,6 @@
     });
   }
   tryAutoSelect('iframe-kosdaq', 'KOSDAQ');
-  tryAutoSelect('iframe-ndx', 'NASDAQ100');
 
   function tick() {
     const opts = {timeZone:'Asia/Seoul',hour12:false,
@@ -260,7 +252,7 @@
 
   window.addEventListener('resize', () => {
     const mainId = document.getElementById('panel-kr').classList.contains('on') ? 'kr' : 'us';
-    if (isMobile()) {
+    if (isMobile() && mainId === 'kr') {
       renderSubTabs(mainId);
       document.getElementById('sub-tab-bar').style.display = 'flex';
     } else {
