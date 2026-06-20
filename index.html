@@ -82,13 +82,14 @@
       top:0; left:0; width:100%; height:100%;
     }
 
-    /* 태블릿 구간: Prober 자체 헤더(로고/검색/메뉴)만큼 위쪽을 잘라낸다.
+    /* 769px 이상(태블릿+PC): Prober 자체 헤더
+       (제목/검색창/로고/메뉴줄)만큼 위쪽을 잘라낸다.
        iframe을 키운 뒤 위로 끌어올려서 헤더 영역이 화면 밖으로 나가게 함 */
-    @media (min-width:769px) and (max-width:1024px) {
+    @media (min-width:769px) {
       .heatmap-inner iframe {
         width:100%;
-        height: calc(100% + 130px);
-        top: -130px;
+        height: calc(100% + 240px);
+        top: -240px;
         left: 0;
       }
     }
