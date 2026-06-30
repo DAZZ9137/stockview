@@ -75,21 +75,6 @@
     }
     .heatmap-panel:last-child { border-right:none; }
     .heatmap-inner { flex:1; min-height:0; position:relative; overflow:hidden; }
-    .finviz-link {
-      position: absolute;
-      top: 8px; right: 12px;
-      z-index: 10;
-      background: rgba(13,17,23,0.85);
-      color: #58a6ff;
-      font-size: 11px; font-weight: 600;
-      padding: 5px 10px;
-      border-radius: 5px;
-      border: 1px solid var(--border);
-      text-decoration: none;
-      backdrop-filter: blur(2px);
-    }
-    .finviz-link:hover { background: rgba(13,17,23,1); color:#79c0ff; }
-
     .heatmap-inner iframe {
       position:absolute;
       border:none; display:block;
@@ -171,11 +156,8 @@
 <div class="tab-panel" id="panel-us">
   <div class="heatmap-area">
     <div class="heatmap-panel active" id="panel-spx">
-      <div class="heatmap-inner">
-        <a href="https://kr.tradingview.com/heatmap/stock/#%7B%22dataSource%22%3A%22SPX500%22%2C%22blockColor%22%3A%22change%22%2C%22blockSize%22%3A%22market_cap_basic%22%2C%22grouping%22%3A%22sector%22%7D" target="_blank" rel="noopener noreferrer" class="finviz-link">
-          TradingView 실시간 보기 ↗
-        </a>
-        <iframe id="iframe-spx" src="https://prober.kr/product/heatmap/stockUs" scrolling="yes"></iframe>
+      <div class="heatmap-inner no-crop">
+        <iframe id="iframe-spx" src="spx500.html" scrolling="no"></iframe>
       </div>
     </div>
   </div>
