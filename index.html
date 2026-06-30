@@ -76,18 +76,9 @@
     }
     .heatmap-panel:last-child { border-right:none; }
     .heatmap-inner { flex:1; min-height:0; position:relative; overflow:hidden; }
-    .live-redirect {
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:18px; color:var(--text-muted); font-size:13px; text-align:center;
-    }
-    .live-link {
-      display:inline-flex; align-items:center; gap:6px;
-      background:var(--c2); color:#0d1117;
-      font-size:14px; font-weight:700;
-      padding:10px 20px; border-radius:8px;
-      text-decoration:none;
-    }
-    .live-link:hover { background:#79c0ff; }
+
+    #btn-us-live { color:#f0b429; }
+    #btn-us-live:hover { background:rgba(240,180,41,0.08); color:#f7c948; }
 
     .heatmap-inner iframe {
       position:absolute;
@@ -95,13 +86,6 @@
       /* 기본(PC, 1024px 초과): 자르기 없음 */
       top:0; left:0; width:100%; height:100%;
     }
-
-    /* US 탭은 PC에서도 항상 서브탭(종가/실시간) 전환 방식 — KR은 좌우 분할 유지 */
-    #panel-us .heatmap-area { position:relative; }
-    #panel-us .heatmap-panel {
-      position:absolute; inset:0; display:none; border:none;
-    }
-    #panel-us .heatmap-panel.active { display:flex; }
 
     /* 769px 이상(태블릿+PC): Prober 자체 헤더
        (제목/검색창/로고/메뉴줄)만큼 위쪽을 잘라낸다.
@@ -150,6 +134,9 @@
   <button class="tab-btn" id="btn-us" onclick="showMain('us')">
     <span class="tab-num">02</span> US
   </button>
+  <button class="tab-btn" id="btn-us-live" onclick="openLiveHeatmap()">
+    <span class="tab-num">03</span> US실시간
+  </button>
   <div class="tab-spacer"></div>
   <div id="clock"></div>
 </div>
@@ -180,15 +167,6 @@
         <iframe id="iframe-spx" src="spx500.html" scrolling="no"></iframe>
       </div>
     </div>
-    <div class="heatmap-panel" id="panel-spx-live">
-      <div class="heatmap-inner no-crop live-redirect">
-        <p>실시간 히트맵은 TradingView 새 탭에서 열립니다.</p>
-        <a href="https://kr.tradingview.com/heatmap/stock/#%7B%22dataSource%22%3A%22SPX500%22%2C%22blockColor%22%3A%22change%22%2C%22blockSize%22%3A%22market_cap_basic%22%2C%22grouping%22%3A%22sector%22%7D"
-           target="_blank" rel="noopener noreferrer" class="live-link">
-          TradingView 실시간 히트맵 열기 ↗
-        </a>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -199,12 +177,17 @@
     kr: [
       { id:'kospi',  label:'KOSPI'    },
       { id:'kosdaq', label:'KOSDAQ'   }
-    ],
-    us: [
-      { id:'spx-close', label:'종가'   },
-      { id:'spx-live',  label:'실시간' }
     ]
+    /* US는 단일 화면, 실시간은 별도 탭(03)에서 새창으로 처리 */
   };
+
+  function openLiveHeatmap() {
+    window.open(
+      'https://kr.tradingview.com/heatmap/stock/#%7B%22dataSource%22%3A%22SPX500%22%2C%22blockColor%22%3A%22change%22%2C%22blockSize%22%3A%22market_cap_basic%22%2C%22grouping%22%3A%22sector%22%7D',
+      '_blank',
+      'noopener,noreferrer'
+    );
+  }
 
   function renderSubTabs(mainId) {
     const bar = document.getElementById('sub-tab-bar');
@@ -230,7 +213,7 @@
 
   function updateSubTabVisibility(mainId) {
     const bar = document.getElementById('sub-tab-bar');
-    const showIt = (mainId === 'us') || (mainId === 'kr' && isMobile());
+    const showIt = (mainId === 'kr' && isMobile());
     if (showIt) {
       renderSubTabs(mainId);
       bar.classList.add('show');
