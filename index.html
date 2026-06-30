@@ -51,6 +51,7 @@
       display:none; flex-shrink:0; background:var(--bg);
       border-bottom:1px solid var(--border); height:28px; padding:0 6px;
     }
+    .sub-tab-bar.show { display:flex; }
     .sub-tab-btn {
       display:inline-flex; align-items:center; padding:0 14px; height:100%;
       font-size:11px; font-weight:600; color:var(--text-muted);
@@ -75,12 +76,32 @@
     }
     .heatmap-panel:last-child { border-right:none; }
     .heatmap-inner { flex:1; min-height:0; position:relative; overflow:hidden; }
+    .live-redirect {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:18px; color:var(--text-muted); font-size:13px; text-align:center;
+    }
+    .live-link {
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--c2); color:#0d1117;
+      font-size:14px; font-weight:700;
+      padding:10px 20px; border-radius:8px;
+      text-decoration:none;
+    }
+    .live-link:hover { background:#79c0ff; }
+
     .heatmap-inner iframe {
       position:absolute;
       border:none; display:block;
       /* 기본(PC, 1024px 초과): 자르기 없음 */
       top:0; left:0; width:100%; height:100%;
     }
+
+    /* US 탭은 PC에서도 항상 서브탭(종가/실시간) 전환 방식 — KR은 좌우 분할 유지 */
+    #panel-us .heatmap-area { position:relative; }
+    #panel-us .heatmap-panel {
+      position:absolute; inset:0; display:none; border:none;
+    }
+    #panel-us .heatmap-panel.active { display:flex; }
 
     /* 769px 이상(태블릿+PC): Prober 자체 헤더
        (제목/검색창/로고/메뉴줄)만큼 위쪽을 잘라낸다.
@@ -97,13 +118,12 @@
 
     @media (max-width:768px) {
       .ticker-wrap { display:none; }
-      .sub-tab-bar { display:flex; }
       .tab-bar { height:30px; }
-      #panel-kr .heatmap-area, #panel-us .heatmap-area { position:relative; }
-      #panel-kr .heatmap-panel, #panel-us .heatmap-panel {
+      #panel-kr .heatmap-area { position:relative; }
+      #panel-kr .heatmap-panel {
         position:absolute; inset:0; display:none; border:none;
       }
-      #panel-kr .heatmap-panel.active, #panel-us .heatmap-panel.active { display:flex; }
+      #panel-kr .heatmap-panel.active { display:flex; }
       /* 모바일도 같은 방식으로 헤더 자르기 적용 (US 위젯은 제외) */
       .heatmap-inner:not(.no-crop) iframe {
         width:100%;
@@ -155,9 +175,18 @@
 <!-- US 탭 -->
 <div class="tab-panel" id="panel-us">
   <div class="heatmap-area">
-    <div class="heatmap-panel active" id="panel-spx">
+    <div class="heatmap-panel active" id="panel-spx-close">
       <div class="heatmap-inner no-crop">
         <iframe id="iframe-spx" src="spx500.html" scrolling="no"></iframe>
+      </div>
+    </div>
+    <div class="heatmap-panel" id="panel-spx-live">
+      <div class="heatmap-inner no-crop live-redirect">
+        <p>실시간 히트맵은 TradingView 새 탭에서 열립니다.</p>
+        <a href="https://kr.tradingview.com/heatmap/stock/#%7B%22dataSource%22%3A%22SPX500%22%2C%22blockColor%22%3A%22change%22%2C%22blockSize%22%3A%22market_cap_basic%22%2C%22grouping%22%3A%22sector%22%7D"
+           target="_blank" rel="noopener noreferrer" class="live-link">
+          TradingView 실시간 히트맵 열기 ↗
+        </a>
       </div>
     </div>
   </div>
@@ -170,8 +199,11 @@
     kr: [
       { id:'kospi',  label:'KOSPI'    },
       { id:'kosdaq', label:'KOSDAQ'   }
+    ],
+    us: [
+      { id:'spx-close', label:'종가'   },
+      { id:'spx-live',  label:'실시간' }
     ]
-    /* US는 prober.kr 단일 화면이라 서브탭 없음 */
   };
 
   function renderSubTabs(mainId) {
@@ -192,13 +224,19 @@
       document.getElementById('panel-'+i).classList.toggle('on', i===id);
       document.getElementById('btn-'+i).classList.toggle('on', i===id);
     });
-    if (isMobile() && id === 'kr') {
-      renderSubTabs(id);
-      document.getElementById('sub-tab-bar').style.display = 'flex';
-    } else {
-      document.getElementById('sub-tab-bar').style.display = 'none';
-    }
+    updateSubTabVisibility(id);
     setHeight();
+  }
+
+  function updateSubTabVisibility(mainId) {
+    const bar = document.getElementById('sub-tab-bar');
+    const showIt = (mainId === 'us') || (mainId === 'kr' && isMobile());
+    if (showIt) {
+      renderSubTabs(mainId);
+      bar.classList.add('show');
+    } else {
+      bar.classList.remove('show');
+    }
   }
 
   function showSub(mainId, subId) {
@@ -244,7 +282,7 @@
     const subBar = document.getElementById('sub-tab-bar');
     const tickerH = (ticker && getComputedStyle(ticker).display!=='none') ? ticker.offsetHeight : 0;
     const tabH = tabBar.offsetHeight;
-    const subH = (subBar.style.display==='flex') ? subBar.offsetHeight : 0;
+    const subH = subBar.classList.contains('show') ? subBar.offsetHeight : 0;
     const h = Math.max(window.innerHeight - tickerH - tabH - subH, 200) + 'px';
     document.querySelectorAll('.tab-panel,.heatmap-area').forEach(el=>el.style.height=h);
   }
@@ -252,14 +290,12 @@
 
   window.addEventListener('resize', () => {
     const mainId = document.getElementById('panel-kr').classList.contains('on') ? 'kr' : 'us';
-    if (isMobile() && mainId === 'kr') {
-      renderSubTabs(mainId);
-      document.getElementById('sub-tab-bar').style.display = 'flex';
-    } else {
-      document.getElementById('sub-tab-bar').style.display = 'none';
-    }
+    updateSubTabVisibility(mainId);
     setHeight();
   });
+
+  /* 초기 렌더: KR 탭 (PC면 서브탭 숨김, 모바일이면 표시) */
+  updateSubTabVisibility('kr');
 </script>
 </body>
 </html>
